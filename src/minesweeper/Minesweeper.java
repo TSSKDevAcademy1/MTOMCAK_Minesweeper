@@ -14,10 +14,12 @@ public class Minesweeper {
      * Constructor.
      */
     private Minesweeper() {
-        userInterface = new ConsoleUI();
+        //userInterface = new ConsoleUI();
         
         Field field = new Field(9, 9, 10);
-        userInterface.newGameStarted(field);
+        
+        System.out.println(field.toString());
+       // userInterface.newGameStarted(field);
     }
 
     /**
