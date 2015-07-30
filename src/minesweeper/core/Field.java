@@ -34,26 +34,6 @@ public class Field {
 	 */
 	private GameState state = GameState.PLAYING;
 
-	public GameState getState() {
-		return state;
-	}
-
-	public void setState(GameState state) {
-		this.state = state;
-	}
-
-	public int getRowCount() {
-		return rowCount;
-	}
-
-	public int getColumnCount() {
-		return columnCount;
-	}
-
-	public int getMineCount() {
-		return mineCount;
-	}
-
 	/**
 	 * Constructor.
 	 *
@@ -205,12 +185,29 @@ public class Field {
 		for (int r = 0; r < rowCount; r++ )
 		{
 			for (int c = 0; c < rowCount; c++ ){
-					field += tiles[r][c].toString();
-					field += ' ';
+					field += tiles[r][c].toString() + " ";
 			}
 			field += "\n";
 		}
 		return field;
 	}
+	public GameState getState() {
+		return state;
+	}
 
+	public void setState(GameState state) {
+		this.state = state;
+	}
+
+	public int getRowCount() {
+		return rowCount;
+	}
+
+	public int getColumnCount() {
+		return columnCount;
+	}
+
+	public int getMineCount() {
+		return mineCount;
+	}
 }

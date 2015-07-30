@@ -1,5 +1,7 @@
 package minesweeper.core;
 
+import minesweeper.core.Tile.State;
+
 /**
  * Clue tile.
  */
@@ -24,6 +26,10 @@ public class Clue extends Tile {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return this.value + "";
+		if (getState() == State.OPEN) {
+			return getValue() + "";
+		} else {
+			return super.toString();
+		}
 	}
 }

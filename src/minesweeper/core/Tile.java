@@ -33,4 +33,22 @@ public abstract class Tile {
     void setState(State state) {
         this.state = state;
     }
+    
+    @Override
+    public String toString() {
+    	// TODO Auto-generated method stub
+    	String mine = "";
+    	
+    	
+    	switch (getState()){
+    	case CLOSED:
+    		mine = "-";
+    		break;
+    	case MARKED:
+    		mine = "+";
+    		break;
+    	}
+    	
+    	return mine;
+    }
 }
