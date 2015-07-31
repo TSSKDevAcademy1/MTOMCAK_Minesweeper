@@ -45,7 +45,7 @@ public abstract class Tile {
     		mine = "-";
     		break;
     	case MARKED:
-    		mine = "+";
+    		mine = "M";
     		break;
     	}
     	

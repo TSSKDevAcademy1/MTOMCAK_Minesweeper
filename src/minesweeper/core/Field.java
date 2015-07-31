@@ -103,7 +103,7 @@ public class Field {
 	 */
 	private void generate() {
 		int k = 1;
-		do{
+		do {
 			Random rNum = new Random();
 
 			/* generate random row and column for mine */
@@ -114,7 +114,7 @@ public class Field {
 				tiles[rRow][rCol] = new Mine();
 			}
 			k++;
-		} while ( k < mineCount);
+		} while (k < mineCount);
 
 		for (int r = 0; r < rowCount; r++) {
 			for (int c = 0; c < columnCount; c++) {
@@ -132,7 +132,30 @@ public class Field {
 	 * @return true if game is solved, false otherwise
 	 */
 	private boolean isSolved() {
-		throw new UnsupportedOperationException("Method isSolved not yet implemented");
+		
+		// test
+		System.out.println(getNumberOf(State.OPEN)); 
+		if (mineCount == (rowCount*columnCount - getNumberOf(State.OPEN)))
+			return true;
+		else return false;
+	}
+
+	/**
+	 * Returns number of uncovered tiles.
+	 *
+	 * @return uTilesNum number of uncovered tiles.
+	 */
+
+	private int getNumberOf(Tile.State state) {
+		int openTile = 0;
+		for (int r = 0; r < rowCount; r++) {
+			for (int c = 0; c < columnCount; c++) {
+				if (tiles[r][c].getState() == state) {
+					openTile++;
+				}
+			}
+		}
+		return openTile;
 	}
 
 	/**
@@ -177,20 +200,6 @@ public class Field {
 		return tiles[row][column];
 	}
 
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		String field = "";
-		
-		for (int r = 0; r < rowCount; r++ )
-		{
-			for (int c = 0; c < rowCount; c++ ){
-					field += tiles[r][c].toString() + " ";
-			}
-			field += "\n";
-		}
-		return field;
-	}
 	public GameState getState() {
 		return state;
 	}
