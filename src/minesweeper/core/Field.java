@@ -66,6 +66,9 @@ public class Field {
 		Tile tile = tiles[row][column];
 		if (tile.getState() == Tile.State.CLOSED) {
 			tile.setState(Tile.State.OPEN);
+			if (((Clue) tile).getValue() == 0){
+				openAdjacentTiles(row, column);
+			}
 			if (tile instanceof Mine) {
 				state = GameState.FAILED;
 			}
@@ -156,7 +159,7 @@ public class Field {
 	}
 
 	private void openAdjacentTiles(int row, int column) {
-
+		Tile tile = tiles[row][column];
 		for (int rowOffset = -1; rowOffset <= 1; rowOffset++) {
 			int actRow = row + rowOffset;
 			if (actRow >= 0 && actRow < rowCount) {

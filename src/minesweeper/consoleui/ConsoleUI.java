@@ -12,7 +12,6 @@ import java.util.regex.Matcher;
 import minesweeper.UserInterface;
 import minesweeper.core.Field;
 import minesweeper.core.GameState;
-import minesweeper.core.Tile;
 
 /**
  * Console user interface.
@@ -108,37 +107,34 @@ public class ConsoleUI implements UserInterface {
 		String selection = null;
 		int col = 0, row = 0;
 
-		Pattern pattern = Pattern.compile("X|(O|M)([A-Za-z])([0-9])"); // add
-																		// ([0-9]+)
-																		// for
-																		// number
-																		// > >10
+		// add ([0-9]+) for number more than 10 value
+		Pattern pattern = Pattern.compile("X|(O|M)([A-Za-z])([0-9])");
 		selection = readLine().toUpperCase(); // read selection
 		Matcher matcher = pattern.matcher(selection);
 
 		// match input value and select group of characters
-		if (matcher.find() && !matcher.group().equals("X")) {
-			row = matcher.group(2).charAt(0) - 65; // convert char to int range
-													// <0; n>
+		if (matcher.find()) {
+			
+			if (matcher.group().equals("X")) {
+				System.out.println("\nGOODBYE !");
+				System.exit(0);
+			}
+			
+			// convert char to int range <0; n>
+			row = matcher.group(2).charAt(0) - 65;
 			col = Integer.parseInt(matcher.group(3));
 
-			if ((row > 0 && row <= field.getRowCount()) && (col > 0 && col <= field.getColumnCount())) {			
+			// check if inesrt column and row is not out of range
+			if ((row >= 0 && row <= field.getRowCount()) && (col >= 0 && col <= field.getColumnCount())) {
 
-				switch (matcher.group(1)) {
-				case "O":
+				if (matcher.group(1).equals("O")) {
 					field.openTile(row, col);
-					break;
-				case "M":
+				} else if (matcher.group(1).equals("M")) {
 					field.markTile(row, col);
-					break;
-				default:
-					System.out.println("Wrong format or Out of range !");
-					break;
 				}
 			}
-		} else if (matcher.group().equals("X")) {
-			System.out.println("\nGOODBYE !");
-			System.exit(0);
+		} else  {
+			System.out.println("\nInsert correct input please !\n");
 		}
 	}
 }

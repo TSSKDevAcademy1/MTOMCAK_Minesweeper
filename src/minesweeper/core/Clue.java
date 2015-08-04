@@ -1,7 +1,5 @@
 package minesweeper.core;
 
-import minesweeper.core.Tile.State;
-
 /**
  * Clue tile.
  */
