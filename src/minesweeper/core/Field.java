@@ -68,12 +68,10 @@ public class Field {
 			tile.setState(Tile.State.OPEN);
 			if (tile instanceof Mine) {
 				state = GameState.FAILED;
-				return;
 			}
 
 			if (isSolved()) {
 				state = GameState.SOLVED;
-				return;
 			}
 		}
 	}
@@ -132,12 +130,11 @@ public class Field {
 	 * @return true if game is solved, false otherwise
 	 */
 	private boolean isSolved() {
-		
 		// test
-		System.out.println(getNumberOf(State.OPEN)); 
-		if (mineCount == (rowCount*columnCount - getNumberOf(State.OPEN)))
+		if (mineCount == (rowCount * columnCount - getNumberOf(State.OPEN)))
 			return true;
-		else return false;
+		else
+			return false;
 	}
 
 	/**
@@ -156,6 +153,23 @@ public class Field {
 			}
 		}
 		return openTile;
+	}
+
+	private void openAdjacentTiles(int row, int column) {
+
+		for (int rowOffset = -1; rowOffset <= 1; rowOffset++) {
+			int actRow = row + rowOffset;
+			if (actRow >= 0 && actRow < rowCount) {
+				for (int columnOffset = -1; columnOffset <= 1; columnOffset++) {
+					int actColumn = column + columnOffset;
+					if (actColumn >= 0 && actColumn < columnCount) {
+						if (tiles[actRow][actColumn] instanceof Clue) {
+							openTile(actRow, actColumn);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
