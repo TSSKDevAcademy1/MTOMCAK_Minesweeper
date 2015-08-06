@@ -66,15 +66,18 @@ public class Field {
 		Tile tile = tiles[row][column];
 		if (tile.getState() == Tile.State.CLOSED) {
 			tile.setState(Tile.State.OPEN);
-			if (((Clue) tile).getValue() == 0){
-				openAdjacentTiles(row, column);
-			}
+
 			if (tile instanceof Mine) {
 				state = GameState.FAILED;
+				return;
 			}
 
 			if (isSolved()) {
 				state = GameState.SOLVED;
+				return;
+			}
+			if (((Clue) tile).getValue() == 0) {
+				openAdjacentTiles(row, column);
 			}
 		}
 	}
@@ -103,7 +106,7 @@ public class Field {
 	 * Generates playing field.
 	 */
 	private void generate() {
-		int k = 1;
+		int k = 0;
 		do {
 			Random rNum = new Random();
 
@@ -111,10 +114,10 @@ public class Field {
 			int rRow = rNum.nextInt(rowCount - 1);
 			int rCol = rNum.nextInt(columnCount - 1);
 
-			if (tiles[rRow][rCol] == null) {
+			if (getTile(rRow, rCol) == null) {
 				tiles[rRow][rCol] = new Mine();
+				k++;
 			}
-			k++;
 		} while (k < mineCount);
 
 		for (int r = 0; r < rowCount; r++) {
@@ -124,7 +127,6 @@ public class Field {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -133,11 +135,7 @@ public class Field {
 	 * @return true if game is solved, false otherwise
 	 */
 	private boolean isSolved() {
-		// test
-		if (mineCount == (rowCount * columnCount - getNumberOf(State.OPEN)))
-			return true;
-		else
-			return false;
+		return rowCount * columnCount - getNumberOf(State.OPEN) == getMineCount();
 	}
 
 	/**
@@ -159,7 +157,6 @@ public class Field {
 	}
 
 	private void openAdjacentTiles(int row, int column) {
-		Tile tile = tiles[row][column];
 		for (int rowOffset = -1; rowOffset <= 1; rowOffset++) {
 			int actRow = row + rowOffset;
 			if (actRow >= 0 && actRow < rowCount) {
@@ -202,6 +199,11 @@ public class Field {
 		}
 
 		return count;
+	}
+
+	public int getRemainingMineCount() {
+		int mark = getMineCount() - getNumberOf(State.MARKED);
+		return mark;
 	}
 
 	/**
