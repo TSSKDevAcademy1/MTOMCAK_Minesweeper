@@ -65,6 +65,7 @@ public class Settings implements Serializable {
 	}
 	
 	public static Settings load(){
+		System.out.println(SETTING_FILE);
 		try {
 			FileInputStream fis = new FileInputStream(SETTING_FILE);
 			ObjectInputStream oos = new ObjectInputStream(fis);

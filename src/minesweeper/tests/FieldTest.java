@@ -1,7 +1,5 @@
 package minesweeper.tests;
 
-import static org.junit.Assert.*;
-
 import java.io.ObjectInputStream.GetField;
 import java.util.Random;
 
