@@ -1,5 +1,7 @@
 package swingui.minesweeper.swingui;
 
+import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -23,276 +25,320 @@ import minesweeper.UserInterface;
 import minesweeper.core.Tile;
 
 public class SwingUI extends javax.swing.JFrame implements UserInterface, MouseListener {
-    private Field field;
-    
-    public SwingUI() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch(Exception e) {}
-        
-        initComponents();
-        
-        setIconImage(new javax.swing.ImageIcon(getClass().getResource("/img/logo.gif")).getImage());
-        setVisible(true);
-        
-        if(Minesweeper.getInstance().getSettings().equals(Settings.BEGINNER)){
-            beginnerMenuItem.setSelected(true);
-        } else if(Minesweeper.getInstance().getSettings().equals(Settings.INTERMEDIATE)){
-            intermediateMenuItem.setSelected(true);
-        } else if(Minesweeper.getInstance().getSettings().equals(Settings.EXPERT)){
-            expertMenuItem.setSelected(true);
-        }
-    }
-    
-    public void newGameStarted(Field field) {
-        
-    	
-    	//throw new UnsupportedOperationException("Method newGameStarted not yet implemented");
-    }
-    
-    public void mousePressed(MouseEvent e) {
-        throw new UnsupportedOperationException("Method mousePressed not yet implemented");
-    }
-    
-    private void setMinesLeftLabelText() {
-        StringBuilder sb = new StringBuilder();
-        new Formatter(sb).format("%03d", field.getRemainingMineCount());
-        
-        minesLeftLabel.setText(sb.toString());
-    }
-    
-    private void setTimeLabelText() {
-        throw new UnsupportedOperationException("Method setTimeLabelText not yet implemented");
-    }
-    
-    public void update() {
-        throw new UnsupportedOperationException("Method update not yet implemented");
-    }
-    
-    // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
-    private void initComponents() {
-        buttonGroup = new javax.swing.ButtonGroup();
-        jPanel1 = new javax.swing.JPanel();
-        topPanel = new javax.swing.JPanel();
-        infoPanel = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        minesLeftLabel = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        timeLabel = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
-        newButton = new javax.swing.JButton();
-        contentPanel = new javax.swing.JPanel();
-        menuBar = new javax.swing.JMenuBar();
-        gameMenu = new javax.swing.JMenu();
-        newMenuItem = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
-        beginnerMenuItem = new javax.swing.JRadioButtonMenuItem();
-        intermediateMenuItem = new javax.swing.JRadioButtonMenuItem();
-        expertMenuItem = new javax.swing.JRadioButtonMenuItem();
-        jSeparator3 = new javax.swing.JSeparator();
-        bestTimesMenuItem = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JSeparator();
-        exitMenuItem = new javax.swing.JMenuItem();
+	private Field field;
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Minesweeper");
-        setResizable(false);
-        jPanel1.setLayout(new java.awt.BorderLayout());
+	public SwingUI() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+		}
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        topPanel.setLayout(new java.awt.BorderLayout());
+		initComponents();
 
-        topPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 2, 5), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED)));
-        infoPanel.setLayout(new java.awt.BorderLayout());
+		setIconImage(new javax.swing.ImageIcon(getClass().getResource("/img/logo.gif")).getImage());
+		setVisible(true);
 
-        infoPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 4, 4, 4));
-        jPanel2.setLayout(new java.awt.BorderLayout());
+		if (Minesweeper.getInstance().getSettings().equals(Settings.BEGINNER)) {
+			beginnerMenuItem.setSelected(true);
+		} else if (Minesweeper.getInstance().getSettings().equals(Settings.INTERMEDIATE)) {
+			intermediateMenuItem.setSelected(true);
+		} else if (Minesweeper.getInstance().getSettings().equals(Settings.EXPERT)) {
+			expertMenuItem.setSelected(true);
+		}
+	}
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        minesLeftLabel.setBackground(java.awt.Color.black);
-        minesLeftLabel.setFont(new java.awt.Font("DialogInput", 1, 24));
-        minesLeftLabel.setForeground(java.awt.Color.red);
-        minesLeftLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        minesLeftLabel.setText("888");
-        minesLeftLabel.setMaximumSize(new java.awt.Dimension(50, 30));
-        minesLeftLabel.setMinimumSize(new java.awt.Dimension(50, 30));
-        minesLeftLabel.setOpaque(true);
-        minesLeftLabel.setPreferredSize(new java.awt.Dimension(50, 30));
-        jPanel2.add(minesLeftLabel, java.awt.BorderLayout.CENTER);
+	public void newGameStarted(Field field) {
+		this.field = field;
+		contentPanel.removeAll();
+		contentPanel.setLayout(new GridLayout(field.getRowCount(), field.getColumnCount()));
+		for (int r = 0; r < field.getRowCount(); r++) {
+			for (int c = 0; c < field.getColumnCount(); c++) {
+				TileComponent tileComp = new TileComponent(field.getTile(r, c), r, c);
+				contentPanel.add(tileComp);
+				tileComp.addMouseListener(this);
+			}
 
-        infoPanel.add(jPanel2, java.awt.BorderLayout.WEST);
+		}
+		update();
+		pack();
+		// throw new UnsupportedOperationException("Method newGameStarted not
+		// yet implemented");
+	}
 
-        jPanel3.setLayout(new java.awt.BorderLayout());
+	public void mousePressed(MouseEvent e) {
+		if (field.getState() == GameState.PLAYING) {
+			TileComponent button = (TileComponent) e.getSource();
+			// Clicked left button
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				field.openTile(button.getRow(), button.getColumn());
+				if (field.getState() == GameState.FAILED) {
+					JOptionPane.showMessageDialog(button, "Failed");
+				} else if (field.getState() == GameState.SOLVED) {
+					JOptionPane.showMessageDialog(button, "You won !");
+					System.out.println(System.getProperty("usern.name") + " "
+							+ Minesweeper.getInstance().getPlayingSeconds() + " s");
+				}
+			}
+			// if clicked right button Mark Tile
+			else if (SwingUtilities.isRightMouseButton(e))
+			{
+				field.markTile(button.getRow(), button.getColumn());
+			}
+		}
+		update();
+	}
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        timeLabel.setBackground(java.awt.Color.black);
-        timeLabel.setFont(new java.awt.Font("DialogInput", 1, 24));
-        timeLabel.setForeground(java.awt.Color.red);
-        timeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        timeLabel.setText("888");
-        timeLabel.setMaximumSize(new java.awt.Dimension(50, 30));
-        timeLabel.setMinimumSize(new java.awt.Dimension(50, 30));
-        timeLabel.setOpaque(true);
-        timeLabel.setPreferredSize(new java.awt.Dimension(50, 30));
-        jPanel3.add(timeLabel, java.awt.BorderLayout.CENTER);
+	private void setMinesLeftLabelText() {
+		StringBuilder sb = new StringBuilder();
+		new Formatter(sb).format("%03d", field.getRemainingMineCount());
 
-        infoPanel.add(jPanel3, java.awt.BorderLayout.EAST);
+		minesLeftLabel.setText(sb.toString());
+	}
 
-        newButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/smile.gif")));
-        newButton.setFocusPainted(false);
-        newButton.setFocusable(false);
-        newButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        newButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newButtonActionPerformed(evt);
-            }
-        });
+	private void setTimeLabelText() {
+		throw new UnsupportedOperationException("Method setTimeLabelText not yet implemented");
+	}
 
-        jPanel4.add(newButton);
+	public void update() {
+		for (int r = 0; r < field.getRowCount(); r++) {
+			for (int c = 0; c < field.getColumnCount(); c++) {
+				TileComponent tileComp = new TileComponent(field.getTile(r, c), r, c);
+				tileComp.updateStyle();
+				setMinesLeftLabelText();
+			}
 
-        infoPanel.add(jPanel4, java.awt.BorderLayout.CENTER);
+		}
+	}
 
-        topPanel.add(infoPanel, java.awt.BorderLayout.CENTER);
+	// <editor-fold defaultstate="collapsed" desc=" Generated Code
+	// ">//GEN-BEGIN:initComponents
+	private void initComponents() {
+		buttonGroup = new javax.swing.ButtonGroup();
+		jPanel1 = new javax.swing.JPanel();
+		topPanel = new javax.swing.JPanel();
+		infoPanel = new javax.swing.JPanel();
+		jPanel2 = new javax.swing.JPanel();
+		minesLeftLabel = new javax.swing.JLabel();
+		jPanel3 = new javax.swing.JPanel();
+		timeLabel = new javax.swing.JLabel();
+		jPanel4 = new javax.swing.JPanel();
+		newButton = new javax.swing.JButton();
+		contentPanel = new javax.swing.JPanel();
+		menuBar = new javax.swing.JMenuBar();
+		gameMenu = new javax.swing.JMenu();
+		newMenuItem = new javax.swing.JMenuItem();
+		jSeparator1 = new javax.swing.JSeparator();
+		beginnerMenuItem = new javax.swing.JRadioButtonMenuItem();
+		intermediateMenuItem = new javax.swing.JRadioButtonMenuItem();
+		expertMenuItem = new javax.swing.JRadioButtonMenuItem();
+		jSeparator3 = new javax.swing.JSeparator();
+		bestTimesMenuItem = new javax.swing.JMenuItem();
+		jSeparator2 = new javax.swing.JSeparator();
+		exitMenuItem = new javax.swing.JMenuItem();
 
-        jPanel1.add(topPanel, java.awt.BorderLayout.NORTH);
+		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		setTitle("Minesweeper");
+		setResizable(false);
+		jPanel1.setLayout(new java.awt.BorderLayout());
 
-        contentPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(3, 5, 5, 5), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED)));
-        jPanel1.add(contentPanel, java.awt.BorderLayout.CENTER);
+		jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+		topPanel.setLayout(new java.awt.BorderLayout());
 
-        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+		topPanel.setBorder(
+				javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 2, 5),
+						javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED)));
+		infoPanel.setLayout(new java.awt.BorderLayout());
 
-        gameMenu.setMnemonic('g');
-        gameMenu.setText("Game");
-        newMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
-        newMenuItem.setMnemonic('n');
-        newMenuItem.setText("New");
-        newMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newMenuItemActionPerformed(evt);
-            }
-        });
+		infoPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 4, 4, 4));
+		jPanel2.setLayout(new java.awt.BorderLayout());
 
-        gameMenu.add(newMenuItem);
+		jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+		minesLeftLabel.setBackground(java.awt.Color.black);
+		minesLeftLabel.setFont(new java.awt.Font("DialogInput", 1, 24));
+		minesLeftLabel.setForeground(java.awt.Color.red);
+		minesLeftLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+		minesLeftLabel.setText("888");
+		minesLeftLabel.setMaximumSize(new java.awt.Dimension(50, 30));
+		minesLeftLabel.setMinimumSize(new java.awt.Dimension(50, 30));
+		minesLeftLabel.setOpaque(true);
+		minesLeftLabel.setPreferredSize(new java.awt.Dimension(50, 30));
+		jPanel2.add(minesLeftLabel, java.awt.BorderLayout.CENTER);
 
-        gameMenu.add(jSeparator1);
+		infoPanel.add(jPanel2, java.awt.BorderLayout.WEST);
 
-        buttonGroup.add(beginnerMenuItem);
-        beginnerMenuItem.setMnemonic('b');
-        beginnerMenuItem.setText("Beginner");
-        beginnerMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                beginnerMenuItemActionPerformed(evt);
-            }
-        });
+		jPanel3.setLayout(new java.awt.BorderLayout());
 
-        gameMenu.add(beginnerMenuItem);
+		jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+		timeLabel.setBackground(java.awt.Color.black);
+		timeLabel.setFont(new java.awt.Font("DialogInput", 1, 24));
+		timeLabel.setForeground(java.awt.Color.red);
+		timeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+		timeLabel.setText("888");
+		timeLabel.setMaximumSize(new java.awt.Dimension(50, 30));
+		timeLabel.setMinimumSize(new java.awt.Dimension(50, 30));
+		timeLabel.setOpaque(true);
+		timeLabel.setPreferredSize(new java.awt.Dimension(50, 30));
+		jPanel3.add(timeLabel, java.awt.BorderLayout.CENTER);
 
-        buttonGroup.add(intermediateMenuItem);
-        intermediateMenuItem.setMnemonic('i');
-        intermediateMenuItem.setText("Intermediate");
-        intermediateMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                intermediateMenuItemActionPerformed(evt);
-            }
-        });
+		infoPanel.add(jPanel3, java.awt.BorderLayout.EAST);
 
-        gameMenu.add(intermediateMenuItem);
+		newButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/smile.gif")));
+		newButton.setFocusPainted(false);
+		newButton.setFocusable(false);
+		newButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
+		newButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				newButtonActionPerformed(evt);
+			}
+		});
 
-        buttonGroup.add(expertMenuItem);
-        expertMenuItem.setMnemonic('e');
-        expertMenuItem.setText("Expert");
-        expertMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                expertMenuItemActionPerformed(evt);
-            }
-        });
+		jPanel4.add(newButton);
 
-        gameMenu.add(expertMenuItem);
+		infoPanel.add(jPanel4, java.awt.BorderLayout.CENTER);
 
-        gameMenu.add(jSeparator3);
+		topPanel.add(infoPanel, java.awt.BorderLayout.CENTER);
 
-        bestTimesMenuItem.setText("Best times...");
-        gameMenu.add(bestTimesMenuItem);
+		jPanel1.add(topPanel, java.awt.BorderLayout.NORTH);
 
-        gameMenu.add(jSeparator2);
+		contentPanel.setBorder(
+				javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(3, 5, 5, 5),
+						javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED)));
+		jPanel1.add(contentPanel, java.awt.BorderLayout.CENTER);
 
-        exitMenuItem.setMnemonic('e');
-        exitMenuItem.setText("Exit");
-        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitMenuItemActionPerformed(evt);
-            }
-        });
+		getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
-        gameMenu.add(exitMenuItem);
+		gameMenu.setMnemonic('g');
+		gameMenu.setText("Game");
+		newMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
+		newMenuItem.setMnemonic('n');
+		newMenuItem.setText("New");
+		newMenuItem.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				newMenuItemActionPerformed(evt);
+			}
+		});
 
-        menuBar.add(gameMenu);
+		gameMenu.add(newMenuItem);
 
-        setJMenuBar(menuBar);
+		gameMenu.add(jSeparator1);
 
-    }// </editor-fold>//GEN-END:initComponents
-    
-    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-        newMenuItemActionPerformed(null);
-    }//GEN-LAST:event_newButtonActionPerformed
-        
-    private void expertMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_expertMenuItemActionPerformed
-        Minesweeper.getInstance().setSettings(Settings.EXPERT);
-        Minesweeper.getInstance().newGame();
-    }//GEN-LAST:event_expertMenuItemActionPerformed
-    
-    private void intermediateMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intermediateMenuItemActionPerformed
-        Minesweeper.getInstance().setSettings(Settings.INTERMEDIATE);
-        Minesweeper.getInstance().newGame();
-    }//GEN-LAST:event_intermediateMenuItemActionPerformed
-    
-    private void beginnerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_beginnerMenuItemActionPerformed
-        Minesweeper.getInstance().setSettings(Settings.BEGINNER);
-        Minesweeper.getInstance().newGame();
-    }//GEN-LAST:event_beginnerMenuItemActionPerformed
-    
-    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_exitMenuItemActionPerformed
-    
-    private void newMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newMenuItemActionPerformed
-        Minesweeper.getInstance().newGame();
-    }//GEN-LAST:event_newMenuItemActionPerformed
-    
-    public void mouseClicked(MouseEvent e) {
-    }
-    
-    public void mouseReleased(MouseEvent e) {
-    }
-    
-    public void mouseEntered(MouseEvent e) {
-    }
-    
-    public void mouseExited(MouseEvent e) {
-    }
-    
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButtonMenuItem beginnerMenuItem;
-    private javax.swing.JMenuItem bestTimesMenuItem;
-    private javax.swing.ButtonGroup buttonGroup;
-    private javax.swing.JPanel contentPanel;
-    private javax.swing.JMenuItem exitMenuItem;
-    private javax.swing.JRadioButtonMenuItem expertMenuItem;
-    private javax.swing.JMenu gameMenu;
-    private javax.swing.JPanel infoPanel;
-    private javax.swing.JRadioButtonMenuItem intermediateMenuItem;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JMenuBar menuBar;
-    private javax.swing.JLabel minesLeftLabel;
-    private javax.swing.JButton newButton;
-    private javax.swing.JMenuItem newMenuItem;
-    private javax.swing.JLabel timeLabel;
-    private javax.swing.JPanel topPanel;
-    // End of variables declaration//GEN-END:variables
+		buttonGroup.add(beginnerMenuItem);
+		beginnerMenuItem.setMnemonic('b');
+		beginnerMenuItem.setText("Beginner");
+		beginnerMenuItem.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				beginnerMenuItemActionPerformed(evt);
+			}
+		});
+
+		gameMenu.add(beginnerMenuItem);
+
+		buttonGroup.add(intermediateMenuItem);
+		intermediateMenuItem.setMnemonic('i');
+		intermediateMenuItem.setText("Intermediate");
+		intermediateMenuItem.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				intermediateMenuItemActionPerformed(evt);
+			}
+		});
+
+		gameMenu.add(intermediateMenuItem);
+
+		buttonGroup.add(expertMenuItem);
+		expertMenuItem.setMnemonic('e');
+		expertMenuItem.setText("Expert");
+		expertMenuItem.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				expertMenuItemActionPerformed(evt);
+			}
+		});
+
+		gameMenu.add(expertMenuItem);
+
+		gameMenu.add(jSeparator3);
+
+		bestTimesMenuItem.setText("Best times...");
+		gameMenu.add(bestTimesMenuItem);
+
+		gameMenu.add(jSeparator2);
+
+		exitMenuItem.setMnemonic('e');
+		exitMenuItem.setText("Exit");
+		exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				exitMenuItemActionPerformed(evt);
+			}
+		});
+
+		gameMenu.add(exitMenuItem);
+
+		menuBar.add(gameMenu);
+
+		setJMenuBar(menuBar);
+
+	}// </editor-fold>//GEN-END:initComponents
+
+	private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_newButtonActionPerformed
+		newMenuItemActionPerformed(null);
+	}// GEN-LAST:event_newButtonActionPerformed
+
+	private void expertMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_expertMenuItemActionPerformed
+		Minesweeper.getInstance().setSettings(Settings.EXPERT);
+		Minesweeper.getInstance().newGame();
+	}// GEN-LAST:event_expertMenuItemActionPerformed
+
+	private void intermediateMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_intermediateMenuItemActionPerformed
+		Minesweeper.getInstance().setSettings(Settings.INTERMEDIATE);
+		Minesweeper.getInstance().newGame();
+	}// GEN-LAST:event_intermediateMenuItemActionPerformed
+
+	private void beginnerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_beginnerMenuItemActionPerformed
+		Minesweeper.getInstance().setSettings(Settings.BEGINNER);
+		Minesweeper.getInstance().newGame();
+	}// GEN-LAST:event_beginnerMenuItemActionPerformed
+
+	private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_exitMenuItemActionPerformed
+		System.exit(0);
+	}// GEN-LAST:event_exitMenuItemActionPerformed
+
+	private void newMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_newMenuItemActionPerformed
+		Minesweeper.getInstance().newGame();
+	}// GEN-LAST:event_newMenuItemActionPerformed
+
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
+	}
+
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JRadioButtonMenuItem beginnerMenuItem;
+	private javax.swing.JMenuItem bestTimesMenuItem;
+	private javax.swing.ButtonGroup buttonGroup;
+	private javax.swing.JPanel contentPanel;
+	private javax.swing.JMenuItem exitMenuItem;
+	private javax.swing.JRadioButtonMenuItem expertMenuItem;
+	private javax.swing.JMenu gameMenu;
+	private javax.swing.JPanel infoPanel;
+	private javax.swing.JRadioButtonMenuItem intermediateMenuItem;
+	private javax.swing.JPanel jPanel1;
+	private javax.swing.JPanel jPanel2;
+	private javax.swing.JPanel jPanel3;
+	private javax.swing.JPanel jPanel4;
+	private javax.swing.JSeparator jSeparator1;
+	private javax.swing.JSeparator jSeparator2;
+	private javax.swing.JSeparator jSeparator3;
+	private javax.swing.JMenuBar menuBar;
+	private javax.swing.JLabel minesLeftLabel;
+	private javax.swing.JButton newButton;
+	private javax.swing.JMenuItem newMenuItem;
+	private javax.swing.JLabel timeLabel;
+	private javax.swing.JPanel topPanel;
+	// End of variables declaration//GEN-END:variables
 }
